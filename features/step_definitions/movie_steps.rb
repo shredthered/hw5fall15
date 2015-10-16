@@ -38,36 +38,85 @@ Given /^I am on the RottenPotatoes home page$/ do
   click_button 'Update Movie Info'
  end
 
-
-# New step definitions to be completed for HW5. 
-# Note that you may need to add additional step definitions beyond these
-
-
-# Add a declarative step here for populating the DB with movies.
+#/* --------------------------------------------------------------------------------------------- */
 
 Given /the following movies have been added to RottenPotatoes:/ do |movies_table|
-  pending  # Remove this statement when you finish implementing the test step
-  movies_table.hashes.each do |movie|
-    # Each returned movie will be a hash representing one row of the movies_table
-    # The keys will be the table headers and the values will be the row contents.
-    # Entries can be directly to the database with ActiveRecord methods
-    # Add the necessary Active Record call(s) to populate the database.
+
+ movies_table.hashes.each do |movie|
+ Movie.create movie
   end
 end
 
-When /^I have opted to see movies rated: "(.*?)"$/ do |arg1|
-  # HINT: use String#split to split up the rating_list, then
-  # iterate over the ratings and check/uncheck the ratings
-  # using the appropriate Capybara command(s)
-  pending  #remove this statement after implementing the test step
+
+When(/^I clicked "(.*?)" link$/) do |arg1|
+  click_on "Movie Title"
 end
 
+Then /^I expect to see "(.*)" before "(.*)"$/ do |arg1, arg2|
+ titleCompare = page.body.to_s 
+       if titleCompare.index(arg1)!= nil && titleCompare.index(arg2)!=nil
+               if titleCompare.index(arg1) < titleCompare.index(arg2)
+               else
+               assert false,”fail”
+               end
+       else
+               assert false,”fail”
+       end
+ 
+end
+
+When /^I clicked the "(.*?)" link$/ do |check|
+ click_on "Release Date"
+end
+
+Then /^I expect to see "(.*)" before I see "(.*)"$/ do |check, date|
+ dateCompare = page.body.to_s 
+       if dateCompare.index(check)!= nil && dateCompare.index(date)!=nil
+               if dateCompare.index(check) < dateCompare.index(date)
+               else
+               assert false,”fail”
+               end
+       else
+               assert false,”fail”
+       end
+end
+
+
+When /^I have opted to see movies rated: "(.*?)"$/ do |arg1|
+
+  page.uncheck("ratings_G")
+  page.uncheck("ratings_PG")
+  page.uncheck("ratings_PG-13")
+  page.uncheck("ratings_R")
+  stringArray = arg1.split(", ")
+  stringArray.each do |x|
+    string = "ratings_"
+    string << (x)
+    page.check(string)
+  end
+  click_button('Refresh')
+end
+
+
 Then /^I should see only movies rated: "(.*?)"$/ do |arg1|
-  pending  #remove this statement after implementing the test step
+  ratingMatch = true
+  ratingsArray = arg1.split(", ")
+  ratings = {"G" => false, "PG"=> false, "PG-13" => false, "R" => false}
+  ratingsArray.each do |x|
+    if(ratingsArray == "G")
+     ratings["G"] = true
+    elsif(ratingsArray == "PG")
+      ratings["PG"] = true
+    elsif(ratingsArray == "PG-13")
+      ratings["PG-13"] = true
+    elsif(ratingsArray == "R")
+      ratings["R"] = true
+    end
+  end
 end
 
 Then /^I should see all of the movies$/ do
-  pending  #remove this statement after implementing the test step
+  Movie.all
 end
 
 

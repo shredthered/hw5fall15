@@ -22,8 +22,16 @@ Background: movies have been added to database
   And I am on the RottenPotatoes home page
 
 Scenario: sort movies alphabetically
-  # your scenario here
+  
+  Given I am on the RottenPotatoes home page
+  
+  When I clicked "Movie Title" link
+  Then I expect to see "2001: A Space Odyssey" before "Aladdin"
 
 Scenario: sort movies in increasing order of release date
-  # your scenario here
+  
+  Given I am on the RottenPotatoes home page
+  
+  When I clicked the "Release Date" link
+  Then I expect to see "1968" before I see "1981"
 
